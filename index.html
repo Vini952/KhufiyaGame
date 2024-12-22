@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KHUFIYA - Secret Agent Game</title>
+    <style>
+        /* Global styles */
+        body {
+            font-family: "Courier New", Courier, monospace;
+            margin: 0;
+            padding: 0;
+            background-color: #121212; /* Dark background */
+            color: #e0e0e0; /* Light text for contrast */
+        }
+
+        /* Header styles */
+        header {
+            background: linear-gradient(45deg, #0a0a0a, #1c1c1c);
+            color: #00ff88; /* Neon green for agent theme */
+            text-align: center;
+            padding: 20px 0;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            letter-spacing: 3px;
+            margin: 0;
+        }
+
+        header p {
+            font-size: 1.2rem;
+            font-style: italic;
+            margin: 5px 0;
+        }
+
+        /* Container styles */
+        .container {
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        /* Input and button styles */
+        input[type="text"] {
+            padding: 10px;
+            border: 2px solid #00ff88;
+            background-color: #1c1c1c;
+            color: #e0e0e0;
+            border-radius: 5px;
+            width: 60%;
+            font-size: 1rem;
+        }
+
+        input[type="text"]::placeholder {
+            color: #888;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin-top: 10px;
+            background: linear-gradient(45deg, #00ff88, #006644);
+            color: #121212;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background: #00cc70;
+            transform: scale(1.1);
+        }
+
+        /* Player list styles */
+        .player-list {
+            margin-top: 20px;
+        }
+
+        .player-list ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .player-list li {
+            margin: 10px 0;
+            padding: 15px;
+            background-color: #1c1c1c;
+            color: #e0e0e0;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+            border-left: 5px solid #00ff88;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .player-list button {
+            background: #1c1c1c;
+            border: 1px solid #00ff88;
+            color: #00ff88;
+            border-radius: 5px;
+            padding: 5px 10px;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .player-list button:hover {
+            background: #00ff88;
+            color: #121212;
+        }
+
+        /* Start button */
+        .container button:last-child {
+            margin-top: 20px;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            background: #ff0044;
+            color: white;
+        }
+
+        .container button:last-child:hover {
+            background: #cc0036;
+        }
+
+        /* Footer with spy-themed text */
+        footer {
+            background: #1c1c1c;
+            padding: 10px 0;
+            text-align: center;
+            color: #888;
+            font-size: 0.9rem;
+            border-top: 1px solid #333;
+        }
+
+        footer p {
+            margin: 0;
+            font-style: italic;
+        }
+
+        /* Optional animations */
+        @keyframes glow {
+            0% {
+                text-shadow: 0 0 5px #00ff88, 0 0 10px #00ff88;
+            }
+            50% {
+                text-shadow: 0 0 15px #00ff88, 0 0 20px #00ff88;
+            }
+            100% {
+                text-shadow: 0 0 5px #00ff88, 0 0 10px #00ff88;
+            }
+        }
+
+        header h1 {
+            animation: glow 2s infinite;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>KHUFIYA</h1>
+        <p>The ultimate secret agent party game</p>
+    </header>
+
+    <div class="container">
+        <div class="player-registration">
+            <h3>Register Your Agents</h3>
+            <input type="text" id="player-name" placeholder="Agent name">
+            <button onclick="registerPlayer()">Add Agent</button>
+        </div>
+
+        <div class="player-list">
+            <h3>Field Operatives</h3>
+            <ul id="player-list"></ul>
+        </div>
+
+        <button onclick="startGame()">Start Operation</button>
+    </div>
+
+    <footer>
+        <p>"The truth is a weapon; use it wisely." - Anonymous</p>
+    </footer>
+
+    <script>
+        const words = [
+           { hindi: "Dost", french: "Ami" },
+           /* [All the words from your previous code go here] */
+        ];
+
+        let players = [];
+        let misterWhite = null;
+        let commonWord = null;
+
+        function registerPlayer() {
+            const playerName = document.getElementById("player-name").value;
+            if (playerName && !players.includes(playerName)) {
+                players.push(playerName);
+                document.getElementById("player-name").value = "";
+                updatePlayerList();
+            }
+        }
+
+        function updatePlayerList() {
+            const playerListElement = document.getElementById("player-list");
+            playerListElement.innerHTML = "";
+            players.forEach(player => {
+                const li = document.createElement("li");
+                li.textContent = player;
+                playerListElement.appendChild(li);
+            });
+        }
+
+        function startGame() {
+            if (players.length < 2) {
+                alert("You need at least 2 players to start the game.");
+                return;
+            }
+
+            const randomIndex = Math.floor(Math.random() * words.length);
+            commonWord = words[randomIndex];
+
+            const misterWhiteIndex = Math.floor(Math.random() * players.length);
+            misterWhite = players[misterWhiteIndex];
+
+            alert("The game has started! Players can view their words one by one.");
+            updatePlayerListWithButtons();
+        }
+
+        function updatePlayerListWithButtons() {
+            const playerListElement = document.getElementById("player-list");
+            playerListElement.innerHTML = "";
+            players.forEach(player => {
+                const li = document.createElement("li");
+                li.textContent = player;
+
+                const buttonShowWord = document.createElement("button");
+                buttonShowWord.textContent = "Show Word";
+                buttonShowWord.onclick = () => showWord(player, buttonShowWord);
+                li.appendChild(buttonShowWord);
+
+                const buttonCheckRole = document.createElement("button");
+                buttonCheckRole.textContent = "Check Role";
+                buttonCheckRole.onclick = () => checkRole(player);
+                li.appendChild(buttonCheckRole);
+
+                playerListElement.appendChild(li);
+            });
+        }
+
+        function showWord(player, button) {
+            if (player === misterWhite) {
+                alert(`${player}, you are Mister White and do not have a word.`);
+            } else {
+                alert(`${player}, your word is: ${commonWord.hindi} (${commonWord.french})`);
+            }
+
+            button.disabled = true;
+            button.textContent = "Word Shown";
+        }
+
+        function checkRole(player) {
+            if (player === misterWhite) {
+                alert(`${player} is Mister White.`);
+            } else {
+                alert(`${player} is NOT Mister White.`);
+            }
+        }
+    </script>
+</body>
+</html>
